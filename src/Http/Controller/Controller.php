@@ -1,5 +1,5 @@
 <?php
-namespace Budgetcontrol\Authentication\Controller;
+namespace Budgetcontrol\Goals\Http\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -10,7 +10,7 @@ class Controller {
     {
         return response([
             'success' => true,
-            'message' => 'Authentication service is up and running'
+            'message' => 'Goals service is up and running'
         ]);
         
     }

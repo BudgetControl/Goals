@@ -30,4 +30,13 @@ if(!function_exists('response')) {
     }
 }
 
-// More functions...
+if(!function_exists('file_get_json')) {
+    function file_get_json(string $path): array {
+        
+        if(!file_exists($path)) {
+            return [];
+        }
+
+        return json_decode(file_get_contents($path), true);
+    }
+}
