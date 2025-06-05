@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22502877f63b8be96ea0893c6d9b9ce8",
+    "content-hash": "9259acfbca42cadeb66e7f115d9a8ef3",
     "packages": [
         {
             "name": "brick/math",
@@ -113,16 +113,16 @@
         },
         {
             "name": "budgetcontrol/library",
-            "version": "v1.3.4-RC",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BudgetControl/Library.git",
-                "reference": "083b25a122f44d035f99a6b8e70af6a2d115dae9"
+                "reference": "d2403e2a69daca946f2df8f39664e4e51143581a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BudgetControl/Library/zipball/083b25a122f44d035f99a6b8e70af6a2d115dae9",
-                "reference": "083b25a122f44d035f99a6b8e70af6a2d115dae9",
+                "url": "https://api.github.com/repos/BudgetControl/Library/zipball/d2403e2a69daca946f2df8f39664e4e51143581a",
+                "reference": "d2403e2a69daca946f2df8f39664e4e51143581a",
                 "shasum": ""
             },
             "require": {
@@ -144,9 +144,9 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/BudgetControl/Library/tree/v1.3.4-RC"
+                "source": "https://github.com/BudgetControl/Library/tree/v1.4.0"
             },
-            "time": "2025-06-05T05:57:28+00:00"
+            "time": "2025-06-05T11:58:46+00:00"
         },
         {
             "name": "cakephp/chronos",
