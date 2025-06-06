@@ -73,6 +73,7 @@ class GoalController extends Controller {
         $goal->workspace_id = $wsid;
         $goal->name = $data['name'];
         $goal->amount = $data['amount'];
+        $goal->category_icon = $data['icon'] ?? null;
         $goal->description = $data['description'] ?? null;
         $goal->due_date = $data['due_date'] ?? null;
         $goal->status = $data['status'] ?? 'active';
