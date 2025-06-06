@@ -61,8 +61,12 @@ class GoalController extends Controller {
         $data = $request->getParsedBody();
         $wsid = $argv['wsid'];
 
-        if (empty($data['name']) || empty($data['amount'] || empty($wsid))) {
-            return response(['error' => 'Name, amount and wsid are required'], 400);
+        if (empty($data['name']) || empty($data['amount'] || empty($wsid)) || empty($data['due_date'])) {
+            return response(['error' => 'Name, amount, due_date and wsid are required'], 400);
+        }
+
+        if($data['due_date'] < date('Y-m-d')) {
+            return response(['error' => 'Due date cannot be in the past'], 400);
         }
 
         $goal = new Goal();
