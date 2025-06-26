@@ -57,9 +57,7 @@ class Goal {
         );
 
         if (isset($data['entries'])) {
-            foreach ($data['entries'] as $entryData) {
-                $goal->addEntry($entryData);
-            }
+            $goal->addEntry($data['entries']);
         }
 
         return $goal;
