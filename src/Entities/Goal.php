@@ -123,9 +123,11 @@ class Goal {
         return $this->icon;
     }
 
-    public function addEntry(Entry|Collection $entry): void {
+    public function addEntry(Entry|Collection|array $entry): void {
         if ($entry instanceof Collection) {
             $this->entries = array_merge($this->entries, $entry->toArray());
+        } elseif (is_array($entry)) {
+            $this->entries = array_merge($this->entries, $entry);
         } else {
             $this->entries[] = $entry;
         }
