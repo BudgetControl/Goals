@@ -1,6 +1,7 @@
 <?php
 namespace Budgetcontrol\Goals\Http\Controller;
 
+use Budgetcontrol\Goals\Entities\Goal as EntitiesGoal;
 use Budgetcontrol\Library\Model\Goal;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -39,6 +40,7 @@ class GoalController extends Controller {
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
+            ->with('entries')
             ->where('uuid', $uuid)
             ->first();
 
@@ -46,6 +48,7 @@ class GoalController extends Controller {
             return response(['error' => 'Goal not found'], 404);
         }
 
+        $goal = EntitiesGoal::create($goal->toArray());
         return response($goal->toArray());
     }
 
