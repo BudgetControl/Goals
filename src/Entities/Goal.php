@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 class Goal {
 
     private string $uuid;
-    private string $workspaceId;
     private string $name;
     private float $targetAmount;
     private \DateTimeInterface $dueDate;
@@ -21,7 +20,6 @@ class Goal {
 
     public function __construct(
         string $uuid,
-        string $workspaceId,
         string $name,
         string $description,
         string $icon,
@@ -30,7 +28,6 @@ class Goal {
         \DateTimeInterface $dueDate
     ) {
         $this->uuid = $uuid;
-        $this->workspaceId = $workspaceId;
         $this->name = $name;
         $this->targetAmount = round($targetAmount, 2);
         $this->dueDate = $dueDate;
@@ -47,7 +44,6 @@ class Goal {
     ): self {
         $goal = new self(
             $data['uuid'] ?? \Ramsey\Uuid\Uuid::uuid4()->toString(),
-            $data['workspaceId'],
             $data['name'],
             $data['description'] ?? '',
             $data['icon'] ?? '',
@@ -99,10 +95,6 @@ class Goal {
         return $this->uuid;
     }
 
-    public function getWorkspaceId(): string {
-        return $this->workspaceId;
-    }
-
     public function getName(): string {
         return $this->name;
     }
@@ -146,7 +138,6 @@ class Goal {
     public function toArray(): array {
         return [
             'uuid' => $this->uuid,
-            'workspaceId' => $this->workspaceId,
             'name' => $this->name,
             'target_amount' => $this->targetAmount,
             'due_date' => $this->dueDate->format('Y-m-d'),
