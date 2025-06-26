@@ -16,6 +16,7 @@ class Goal {
     private string $icon = '';
     private float $balance = 0.0;
     private int $percentage = 0;
+    private string $status;
     private array $entries = [];
 
     public function __construct(
@@ -25,7 +26,8 @@ class Goal {
         string $icon,
         float $targetAmount,
         float $balance,
-        \DateTimeInterface $dueDate
+        \DateTimeInterface $dueDate,
+        string $status
     ) {
         $this->uuid = $uuid;
         $this->name = $name;
@@ -36,6 +38,7 @@ class Goal {
         $this->icon = $icon;
         $this->balance = round($balance, 2);
         $this->percentage = $this->calculateTotalPercentage();
+        $this->status = $status;
 
     }
 
@@ -46,10 +49,11 @@ class Goal {
             $data['uuid'] ?? \Ramsey\Uuid\Uuid::uuid4()->toString(),
             $data['name'],
             $data['description'] ?? '',
-            $data['icon'] ?? '',
-            $data['targetAmount'],
-            $data['dueDate'],
-            $data['balance'] ?? 0.0
+            $data['category_icon'] ?? '',
+            $data['amount'],
+            $data['balance'] ?? 0.0,
+            new \DateTime($data['due_date']),
+            $data['status'] ?? 'active'
         );
 
         if (isset($data['entries'])) {
@@ -135,6 +139,10 @@ class Goal {
         return $this->percentage;
     }
 
+    public function getStatus(): string {
+        return $this->status;
+    }
+
     public function toArray(): array {
         return [
             'uuid' => $this->uuid,
@@ -146,6 +154,7 @@ class Goal {
             'icon' => $this->icon,
             'balance' => $this->balance,
             'entries' => array_map(fn($entry) => $entry->toArray(), $this->entries),
+            'status' => $this->status,
             'percentage' => $this->percentage,
         ];
     }
