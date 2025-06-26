@@ -12,9 +12,11 @@ class Goal {
     private string $name;
     private float $targetAmount;
     private \DateTimeInterface $dueDate;
-    private float $monthlyAmount;
+    private float $monthlyDeposit;
     private string $description = '';
     private string $icon = '';
+    private float $balance = 0.0;
+    private int $percentage = 0;
     private array $entries = [];
 
     public function __construct(
@@ -24,6 +26,7 @@ class Goal {
         string $description,
         string $icon,
         float $targetAmount,
+        float $balance,
         \DateTimeInterface $dueDate
     ) {
         $this->uuid = $uuid;
@@ -31,7 +34,11 @@ class Goal {
         $this->name = $name;
         $this->targetAmount = round($targetAmount, 2);
         $this->dueDate = $dueDate;
-        $this->monthlyAmount = round($this->calculateMonthlyAmount(), 2);
+        $this->monthlyDeposit = round($this->calculatemonthlyDeposit(), 2);
+        $this->description = $description;
+        $this->icon = $icon;
+        $this->balance = round($balance, 2);
+        $this->percentage = $this->calculateTotalPercentage();
 
     }
 
@@ -45,7 +52,8 @@ class Goal {
             $data['description'] ?? '',
             $data['icon'] ?? '',
             $data['targetAmount'],
-            $data['dueDate']
+            $data['dueDate'],
+            $data['balance'] ?? 0.0
         );
 
         if (isset($data['entries'])) {
@@ -57,7 +65,31 @@ class Goal {
         return $goal;
     }
 
-    private function calculateMonthlyAmount(): float {
+    /**
+     * Calculates the total percentage completion of the goal.
+     *
+     * This method determines the overall progress percentage of the goal
+     * based on its current state and associated transactions.
+     *
+     * @return int The calculated percentage completion (0-100)
+     */
+    private function calculateTotalPercentage(): int {
+        if ($this->targetAmount <= 0) {
+            return 0;
+        }
+        $percentage = ($this->balance / $this->targetAmount) * 100;
+        return (int) round($percentage);
+    }
+
+    /**
+     * Calculates the monthly deposit amount for the goal.
+     *
+     * This method determines the monthly amount that needs to be deposited
+     * to reach the goal's target amount within the specified timeframe.
+     *
+     * @return float The calculated monthly deposit amount
+     */
+    private function calculatemonthlyDeposit(): float {
         $interval = $this->dueDate->diff(new \DateTime());
         $months = ($interval->y * 12) + $interval->m;
         return $months > 0 ? $this->targetAmount / $months : 0.0;
@@ -83,8 +115,8 @@ class Goal {
         return $this->dueDate;
     }
 
-    public function getMonthlyAmount(): float {
-        return $this->monthlyAmount;
+    public function getmonthlyDeposit(): float {
+        return $this->monthlyDeposit;
     }
 
     public function getDescription(): string {
@@ -103,17 +135,27 @@ class Goal {
         }
     }
 
+    public function getBalance(): float {
+        return $this->balance;
+    }
+
+    public function getPercentage(): int {
+        return $this->percentage;
+    }
+
     public function toArray(): array {
         return [
             'uuid' => $this->uuid,
             'workspaceId' => $this->workspaceId,
             'name' => $this->name,
-            'targetAmount' => $this->targetAmount,
-            'dueDate' => $this->dueDate->format('Y-m-d'),
-            'monthlyAmount' => $this->monthlyAmount,
+            'target_amount' => $this->targetAmount,
+            'due_date' => $this->dueDate->format('Y-m-d'),
+            'monthly_deposit' => $this->monthlyDeposit,
             'description' => $this->description,
             'icon' => $this->icon,
+            'balance' => $this->balance,
             'entries' => array_map(fn($entry) => $entry->toArray(), $this->entries),
+            'percentage' => $this->percentage,
         ];
     }
 
