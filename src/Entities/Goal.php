@@ -155,7 +155,7 @@ class Goal {
             'description' => $this->description,
             'icon' => $this->icon,
             'balance' => $this->balance,
-            'entries' => array_map(fn($entry) => $entry->toArray(), $this->entries),
+            'entries' => $this->entries,
             'status' => $this->status,
             'percentage' => $this->percentage,
         ];
