@@ -40,7 +40,9 @@ class GoalController extends Controller {
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
-            ->with('entries')
+            ->with(['entries' => function($query) {
+                $query->withRelations(); 
+            }])
             ->where('uuid', $uuid)
             ->first();
 
