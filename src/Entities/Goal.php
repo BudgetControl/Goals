@@ -50,8 +50,8 @@ class Goal {
             $data['name'],
             $data['description'] ?? '',
             $data['category_icon'] ?? '',
-            $data['amount'],
-            $data['balance'] ?? 0.0,
+            (float) $data['amount'],
+            (float) $data['balance'] ?? 0.0,
             new \DateTime($data['due_date']),
             $data['status'] ?? 'active'
         );
