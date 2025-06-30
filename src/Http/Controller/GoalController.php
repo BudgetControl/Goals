@@ -6,6 +6,7 @@ use Budgetcontrol\Library\Model\Goal;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Ramsey\Uuid\Uuid;
+use Budgetcontrol\Goals\Enums\Status;
 
 class GoalController extends Controller {
 
@@ -74,6 +75,10 @@ class GoalController extends Controller {
             return response(['error' => 'Due date cannot be in the past'], 400);
         }
 
+        if (!isset($data['status']) || !in_array($data['status'], Status::getValues())) {
+            return response(['error' => 'Invalid status'], 400);
+        }
+
         $goal = new Goal();
         $goal->workspace_id = $wsid;
         $goal->name = $data['name'];
@@ -107,6 +112,10 @@ class GoalController extends Controller {
 
         if (!$goal) {
             return response(['error' => 'Goal not found'], 404);
+        }
+
+        if (!isset($data['status']) || !in_array($data['status'], Status::getValues())) {
+            return response(['error' => 'Invalid status'], 400);
         }
 
         if (isset($data['name'])) {
@@ -156,5 +165,37 @@ class GoalController extends Controller {
 
         return response(['message' => 'Goal deleted successfully'], 204);
     }
-    
+
+    /**
+     * Updates the status of a goal.
+     *
+     * @param Request $request The HTTP request containing the new status
+     * @return Response The HTTP response after updating the status
+     */
+    public function updateStatus(Request $request, Response $response, $argv): Response
+    {
+        $data = $request->getParsedBody();
+        $wsid = $argv['wsid'];
+        $uuid = $argv['uuid'];
+
+        $goal = Goal::where('workspace_id', $wsid)
+            ->where('uuid', $uuid)
+            ->first();
+
+        if (!$goal) {
+            return response(['error' => 'Goal not found'], 404);
+        }
+
+        if (!isset($data['status']) || !in_array($data['status'], Status::getValues())) {
+            return response(['error' => 'Invalid status'], 400);
+        }
+
+        if (isset($data['status'])) {
+            $goal->status = $data['status'];
+        }
+
+        $goal->save();
+
+        return response($goal->toArray());
+    }
 }
