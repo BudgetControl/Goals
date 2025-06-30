@@ -75,7 +75,7 @@ class GoalController extends Controller {
             return response(['error' => 'Due date cannot be in the past'], 400);
         }
 
-        if (!isset($data['status']) || !in_array($data['status'], Status::getValues())) {
+        if (isset($data['status']) && !in_array($data['status'], Status::getValues())) {
             return response(['error' => 'Invalid status'], 400);
         }
 
@@ -114,7 +114,7 @@ class GoalController extends Controller {
             return response(['error' => 'Goal not found'], 404);
         }
 
-        if (!isset($data['status']) || !in_array($data['status'], Status::getValues())) {
+        if (isset($data['status']) && !in_array($data['status'], Status::getValues())) {
             return response(['error' => 'Invalid status'], 400);
         }
 
