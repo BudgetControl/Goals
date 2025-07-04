@@ -8,21 +8,21 @@
             "type": "vcs",
             "url": "https://github.com/mlabfactory/phpunit-self-api-integration.git"
         },
-        "budgetcontrol/library" : {
-            "type":"vcs",
-            "url":"https://github.com/BudgetControl/Library.git"
+        "budgetcontrol/library": {
+            "type": "vcs",
+            "url": "https://github.com/BudgetControl/Library.git"
         },
-        "budgetcontrol/seeds" : {
-            "type":"vcs",
-            "url":"git@github.com:BudgetControl/SeedsTestLibs.git"
+        "budgetcontrol/seeds": {
+            "type": "vcs",
+            "url": "git@github.com:BudgetControl/SeedsTestLibs.git"
         },
-        "budgetcontrol/schema-registry-service" : {
-            "type":"vcs",
-            "url":"git@github.com:BudgetControl/Schema-Registry-Service.git"
+        "budgetcontrol/schema-registry-service": {
+            "type": "vcs",
+            "url": "git@github.com:BudgetControl/Schema-Registry-Service.git"
         },
-        "budgetcontrol/cryptable" : {
-            "type":"vcs",
-            "url":"git@github.com:BudgetControl/LibsCryptable.git"
+        "budgetcontrol/cryptable": {
+            "type": "vcs",
+            "url": "git@github.com:BudgetControl/LibsCryptable.git"
         }
     },
     "require": {
@@ -44,7 +44,8 @@
         "illuminate/filesystem": "^11.0",
         "nesbot/carbon": "^3.2",
         "logtail/monolog-logtail": "^3.1",
-        "budgetcontrol/library": "~v1.4.0"
+        "budgetcontrol/library": "~v1.4.0",
+        "bref/bref": "~2.4.7"
     },
     "require-dev": {
         "nikic/php-parser": "^5.0",
@@ -68,5 +69,8 @@
             "email": "marco.defelice@mlabfactory.it"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "scripts": {
+        "deploy": "serverless deploy"
+    }
 }
