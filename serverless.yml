@@ -7,7 +7,6 @@ provider:
     name: serverless-framework-deployments-eu-west-1-41d5edce-535f
 plugins:
   - ./vendor/bref/bref
-  - serverless-dotenv-plugin
 functions:
   web:
     handler: public/index.php
@@ -22,6 +21,7 @@ package:
     - 'node_modules/**'
     - 'tests/**'
     - 'storage/logs/**'
+    - '.env.*'
   include:
     - 'public/**'
     - 'vendor/**'
