@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Ramsey\Uuid\Uuid;
 use Budgetcontrol\Goals\Enums\Status;
+use Budgetcontrol\Library\Model\Workspace;
 
 class GoalController extends Controller {
 
@@ -20,7 +21,7 @@ class GoalController extends Controller {
      */
     public function get(Request $request, Response $response, $argv): Response
     {
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
 
         $goals = Goal::where('workspace_id', $wsid)
             ->orderBy('created_at', 'desc')
@@ -37,7 +38,7 @@ class GoalController extends Controller {
      */
     public function find(Request $request, Response $response, $argv): Response
     {
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
@@ -65,7 +66,7 @@ class GoalController extends Controller {
     public function store(Request $request, Response $response, $argv): Response
     {
         $data = $request->getParsedBody();
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
 
         if (empty($data['name']) || empty($data['amount'] || empty($wsid)) || empty($data['due_date'])) {
             return response(['error' => 'Name, amount, due_date and wsid are required'], 400);
@@ -103,7 +104,7 @@ class GoalController extends Controller {
     public function update(Request $request, Response $response, $argv): Response
     {
         $data = $request->getParsedBody();
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
@@ -150,7 +151,7 @@ class GoalController extends Controller {
      */
     public function delete(Request $request, Response $response, $argv): Response
     {
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
@@ -175,7 +176,7 @@ class GoalController extends Controller {
     public function updateStatus(Request $request, Response $response, $argv): Response
     {
         $data = $request->getParsedBody();
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
@@ -197,5 +198,12 @@ class GoalController extends Controller {
         $goal->save();
 
         return response($goal->toArray());
+    }
+
+    public function getWorkspaceIdFromUUID(string $uuid): ?string
+    {
+        $workspace = Workspace::where('uuid', $uuid)
+            ->first();
+        return $workspace ? $workspace->id : null;
     }
 }
