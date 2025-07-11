@@ -3,10 +3,31 @@ provider:
   name: aws
   region: eu-west-1
   runtime: provided.al2
+  memorySize: 1024  # Aumentata per migliori performance
+  timeout: 29       # Quasi al limite massimo per API Gateway
+  logRetentionInDays: 30
+  tracing:
+    apiGateway: true
+    lambda: true    # Abilita X-Ray
+  environment:
+    APP_NAME: ${env:APP_NAME, 'Goals-MS'}
+    APP_ENV: ${env:APP_ENV, 'local'}
+    APP_KEY: ${env:APP_KEY}
+    APP_DEBUG: ${env:APP_DEBUG, false}
+    LOG_CHANNEL: ${env:LOG_CHANNEL, 'stderr'}
+    DB_CONNECTION: ${env:DB_CONNECTION}
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DB_DATABASE: ${env:DB_DATABASE}
+    DB_USERNAME: ${env:DB_USERNAME}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+    DB_COLLATION: utf8mb4_unicode_ci
+    LOGTAIL_API_KEY: ${env:LOGTAIL_API_KEY}
   deploymentBucket:
     name: serverless-framework-deployments-eu-west-1-41d5edce-535f
 plugins:
   - ./vendor/bref/bref
+  - serverless-prune-plugin  # Richiede installazione
 functions:
   web:
     handler: public/index.php
@@ -27,3 +48,10 @@ package:
     - 'vendor/**'
     - 'bootstrap/**'
     - 'storage/**'
+
+resources:
+  Resources:
+    ApiGatewayLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: 30

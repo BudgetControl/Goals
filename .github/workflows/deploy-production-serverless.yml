@@ -2,6 +2,8 @@ name: Deploy Goal application
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -61,31 +63,42 @@ jobs:
         DB_PASSWORD: root
       run: vendor/bin/phpunit test
 
-  deploy_job:
+  deploy_serverless:
     runs-on: ubuntu-latest
     environment: prod
     name: deploy
     needs: run-tests
     steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: deploy file
-          uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-          with:
-              username: ${{ secrets.SFTP_USER }} 
-              server: ${{ secrets.SFTP_HOST }} 
-              ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
-              password: ${{ secrets.SFTP_PASSWORD }} 
-              local_path: '.'
-              remote_path: ${{ secrets.SFTP_PATH }}
-              sftpArgs: '-o ConnectTimeout=5'
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          
+      - name: Install Serverless Framework
+        run: npm install -g serverless
 
-        - name: executing composer install
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SFTP_HOST }}
-            username: ${{ secrets.SFTP_USER }}
-            password: ${{ secrets.SFTP_PASSWORD }}
-            port:  ${{ secrets.SFTP_PORT }}
-            script: docker exec budgetcontrol-ms-goals composer install
-  
+      - name: Install Serverless plugins
+        run: npm install --save-dev
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install Composer dependencies for production
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Deploy with Serverless
+        run: serverless deploy --stage prod
+        env:
+          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
