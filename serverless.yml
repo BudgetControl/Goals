@@ -1,4 +1,5 @@
 service: budgetcontrol-ms-goal
+frameworkVersion: ~4.17.1
 provider:
   name: aws
   region: eu-west-1
