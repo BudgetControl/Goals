@@ -9,3 +9,4 @@ $app->get('/{wsid}/{uuid}', \Budgetcontrol\Goals\Http\Controller\GoalController:
 $app->post('/{wsid}', \Budgetcontrol\Goals\Http\Controller\GoalController::class . ':store');
 $app->put('/{wsid}/{uuid}', \Budgetcontrol\Goals\Http\Controller\GoalController::class . ':update');
 $app->delete('/{wsid}/{uuid}', \Budgetcontrol\Goals\Http\Controller\GoalController::class . ':delete');
+$app->patch('/{wsid}/{uuid}/status', \Budgetcontrol\Goals\Http\Controller\GoalController::class . ':updateStatus');

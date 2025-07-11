@@ -1,10 +1,13 @@
 <?php
 namespace Budgetcontrol\Goals\Http\Controller;
 
+use Budgetcontrol\Goals\Entities\Goal as EntitiesGoal;
 use Budgetcontrol\Library\Model\Goal;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Ramsey\Uuid\Uuid;
+use Budgetcontrol\Goals\Enums\Status;
+use Budgetcontrol\Library\Model\Workspace;
 
 class GoalController extends Controller {
 
@@ -18,7 +21,7 @@ class GoalController extends Controller {
      */
     public function get(Request $request, Response $response, $argv): Response
     {
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
 
         $goals = Goal::where('workspace_id', $wsid)
             ->orderBy('created_at', 'desc')
@@ -35,10 +38,13 @@ class GoalController extends Controller {
      */
     public function find(Request $request, Response $response, $argv): Response
     {
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
+            ->with(['entries' => function($query) {
+                $query->withRelations(); 
+            }])
             ->where('uuid', $uuid)
             ->first();
 
@@ -46,6 +52,7 @@ class GoalController extends Controller {
             return response(['error' => 'Goal not found'], 404);
         }
 
+        $goal = EntitiesGoal::create($goal->toArray());
         return response($goal->toArray());
     }
 
@@ -59,16 +66,25 @@ class GoalController extends Controller {
     public function store(Request $request, Response $response, $argv): Response
     {
         $data = $request->getParsedBody();
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
 
-        if (empty($data['name']) || empty($data['amount'] || empty($wsid))) {
-            return response(['error' => 'Name, amount and wsid are required'], 400);
+        if (empty($data['name']) || empty($data['amount'] || empty($wsid)) || empty($data['due_date'])) {
+            return response(['error' => 'Name, amount, due_date and wsid are required'], 400);
+        }
+
+        if($data['due_date'] < date('Y-m-d')) {
+            return response(['error' => 'Due date cannot be in the past'], 400);
+        }
+
+        if (isset($data['status']) && !in_array($data['status'], Status::getValues())) {
+            return response(['error' => 'Invalid status'], 400);
         }
 
         $goal = new Goal();
         $goal->workspace_id = $wsid;
         $goal->name = $data['name'];
         $goal->amount = $data['amount'];
+        $goal->category_icon = $data['icon'] ?? null;
         $goal->description = $data['description'] ?? null;
         $goal->due_date = $data['due_date'] ?? null;
         $goal->status = $data['status'] ?? 'active';
@@ -88,7 +104,7 @@ class GoalController extends Controller {
     public function update(Request $request, Response $response, $argv): Response
     {
         $data = $request->getParsedBody();
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
@@ -97,6 +113,10 @@ class GoalController extends Controller {
 
         if (!$goal) {
             return response(['error' => 'Goal not found'], 404);
+        }
+
+        if (isset($data['status']) && !in_array($data['status'], Status::getValues())) {
+            return response(['error' => 'Invalid status'], 400);
         }
 
         if (isset($data['name'])) {
@@ -131,7 +151,7 @@ class GoalController extends Controller {
      */
     public function delete(Request $request, Response $response, $argv): Response
     {
-        $wsid = $argv['wsid'];
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
         $uuid = $argv['uuid'];
 
         $goal = Goal::where('workspace_id', $wsid)
@@ -146,5 +166,44 @@ class GoalController extends Controller {
 
         return response(['message' => 'Goal deleted successfully'], 204);
     }
-    
+
+    /**
+     * Updates the status of a goal.
+     *
+     * @param Request $request The HTTP request containing the new status
+     * @return Response The HTTP response after updating the status
+     */
+    public function updateStatus(Request $request, Response $response, $argv): Response
+    {
+        $data = $request->getParsedBody();
+        $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
+        $uuid = $argv['uuid'];
+
+        $goal = Goal::where('workspace_id', $wsid)
+            ->where('uuid', $uuid)
+            ->first();
+
+        if (!$goal) {
+            return response(['error' => 'Goal not found'], 404);
+        }
+
+        if (!isset($data['status']) || !in_array($data['status'], Status::getValues())) {
+            return response(['error' => 'Invalid status'], 400);
+        }
+
+        if (isset($data['status'])) {
+            $goal->status = $data['status'];
+        }
+
+        $goal->save();
+
+        return response($goal->toArray());
+    }
+
+    public function getWorkspaceIdFromUUID(string $uuid): ?string
+    {
+        $workspace = Workspace::where('uuid', $uuid)
+            ->first();
+        return $workspace ? $workspace->id : null;
+    }
 }
