@@ -75,7 +75,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
           
       - name: Install Serverless Framework
         run: npm install -g serverless
@@ -96,9 +96,16 @@ jobs:
       - name: Deploy with Serverless
         run: serverless deploy --stage prod
         env:
-          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          APP_NAME: ${var:APP_NAME, 'Goals-MS'}
+          APP_ENV: ${env:APP_ENV, 'local'}
+          APP_KEY: ${env:APP_KEY}
+          APP_DEBUG: ${env:APP_DEBUG, false}
+          LOG_CHANNEL: ${env:LOG_CHANNEL, 'stderr'}
+          DB_CONNECTION: ${env:DB_CONNECTION}
+          DB_HOST: ${env:DB_HOST}
+          DB_PORT: ${env:DB_PORT}
+          DB_DATABASE: ${env:DB_DATABASE}
+          DB_USERNAME: ${env:DB_USERNAME}
+          DB_PASSWORD: ${env:DB_PASSWORD}
+          DB_COLLATION: utf8mb4_unicode_ci
+          LOGTAIL_API_KEY: ${env:LOGTAIL_API_KEY}
