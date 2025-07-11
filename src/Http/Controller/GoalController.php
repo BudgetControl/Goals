@@ -68,7 +68,7 @@ class GoalController extends Controller {
         $data = $request->getParsedBody();
         $wsid = $this->getWorkspaceIdFromUUID($argv['wsid']);
 
-        if (empty($data['name']) || empty($data['amount'] || empty($wsid)) || empty($data['due_date'])) {
+        if (empty($data['name']) || empty($data['amount']) || empty($wsid) || empty($data['due_date'])) {
             return response(['error' => 'Name, amount, due_date and wsid are required'], 400);
         }
 

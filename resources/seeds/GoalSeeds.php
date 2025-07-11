@@ -8,9 +8,26 @@ class GoalSeeds extends AbstractSeed
 
     public function run(): void
     {
+
+
+        \Budgetcontrol\Library\Model\Workspace::create([
+            'name' => 'goal workspace',
+            'description' => 'Workspace for goal management',
+            'current' => 1,
+            'user_id' => 1,
+            'uuid' => "de4f2a9c-9c0a-4ee6-ab46-fb4536fd7461",
+        ]);
+
+        // set relation with user and workspace
+        $user = \Budgetcontrol\Library\Model\User::find(1);
+        $workspace = \Budgetcontrol\Library\Model\Workspace::where('uuid', "de4f2a9c-9c0a-4ee6-ab46-fb4536fd7461")->first();
+    
+        $workspace->users()->attach($user);
+        $workspace->save();
+        
         $goals = [
             [
-                'workspace_id' => 1,
+                'workspace_id' => 2,
                 'name' => 'Emergency Fund',
                 'amount' => 10000.00,
                 'description' => 'Build emergency fund for unexpected expenses',
@@ -20,7 +37,7 @@ class GoalSeeds extends AbstractSeed
                 'uuid' => '9f47af2d-8c2b-4812-b164-5e58b731c106'
             ],
             [
-                'workspace_id' => 1,
+                'workspace_id' => 2,
                 'name' => 'New Car',
                 'amount' => 25000.00,
                 'description' => 'Save for a new vehicle',
@@ -30,7 +47,7 @@ class GoalSeeds extends AbstractSeed
                 'uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString()
             ],
             [
-                'workspace_id' => 1,
+                'workspace_id' => 2,
                 'name' => 'Home Down Payment',
                 'amount' => 50000.00,
                 'description' => 'Save for home purchase',
@@ -40,7 +57,7 @@ class GoalSeeds extends AbstractSeed
                 'uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString()
             ],
             [
-                'workspace_id' => 1,
+                'workspace_id' => 2,
                 'name' => 'Vacation',
                 'amount' => 3000.00,
                 'description' => 'Summer vacation fund',
@@ -50,7 +67,7 @@ class GoalSeeds extends AbstractSeed
                 'uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString()
             ],
             [
-                'workspace_id' => 1,
+                'workspace_id' => 2,
                 'name' => 'Education',
                 'amount' => 15000.00,
                 'description' => 'College education savings',
@@ -73,5 +90,6 @@ class GoalSeeds extends AbstractSeed
             $goal->uuid = $goalData['uuid'];
             $goal->save();
         }
+
     }
 }

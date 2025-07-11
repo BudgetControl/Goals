@@ -16,7 +16,7 @@ class GetApiTest extends \PHPUnit\Framework\TestCase
         /** @var  \Psr\Http\Message\ServerRequestInterface $request */
         $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $argv = ['wsid' => 1];
+        $argv = ['wsid' => "de4f2a9c-9c0a-4ee6-ab46-fb4536fd7461"];
 
         $controller = new GoalController();
         $result = $controller->get($request, $response, $argv);
@@ -47,7 +47,7 @@ class GetApiTest extends \PHPUnit\Framework\TestCase
         /** @var  \Psr\Http\Message\ServerRequestInterface $request */
         $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $argv = ['wsid' => 1];
+        $argv = ['wsid' => "de4f2a9c-9c0a-4ee6-ab46-fb4536fd7461"];
         $request->method('getParsedBody')->willReturn(
             $this->mook()
         );
@@ -72,7 +72,7 @@ class GetApiTest extends \PHPUnit\Framework\TestCase
         /** @var  \Psr\Http\Message\ServerRequestInterface $request */
         $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $argv = ['wsid' => 1, 'uuid' => '9f47af2d-8c2b-4812-b164-5e58b731c106'];
+        $argv = ['wsid' => "de4f2a9c-9c0a-4ee6-ab46-fb4536fd7461", 'uuid' => '9f47af2d-8c2b-4812-b164-5e58b731c106'];
         $request->method('getParsedBody')->willReturn(
             $payload
         );
@@ -91,7 +91,7 @@ class GetApiTest extends \PHPUnit\Framework\TestCase
         /** @var  \Psr\Http\Message\ServerRequestInterface $request */
         $request = $this->createMock(ServerRequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $argv = ['wsid' => 1, 'uuid' => '9f47af2d-8c2b-4812-b164-5e58b731c106'];
+        $argv = ['wsid' => "de4f2a9c-9c0a-4ee6-ab46-fb4536fd7461", 'uuid' => '9f47af2d-8c2b-4812-b164-5e58b731c106'];
 
         $controller = new GoalController();
         $result = $controller->delete($request, $response, $argv);
